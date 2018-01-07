@@ -15,10 +15,6 @@ import json
 
 
 #Variables that contains the user credentials to access Twitter API 
-access_token = "238644596-Z79vxua9Mz7NZV2nUmDXXmzgJpF97jJnfbAO0I9h"
-access_token_secret = "mHgOiP5EmZT688eyEXDqkGXdEh31VKwZW8fLd9Whvrq2i"
-consumer_key = "pAppVEyYbySbiKqDEJv9dxIlj"
-consumer_secret = "gIJW44HRgRu6u1o0JL6Pw3D6Cetg8GTmCYWhajGWAl4XlvbMXJ"
 
 def analyze(content):
     """Run a sentiment analysis request on text within a passed filename."""
