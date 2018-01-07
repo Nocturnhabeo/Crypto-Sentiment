@@ -1,9 +1,9 @@
 
 
-#NLP Sentiment Analysis 
-from google.cloud import language
-from google.cloud.language import enums
-from google.cloud.language import types
+# #NLP Sentiment Analysis 
+# from google.cloud import language
+# from google.cloud.language import enums
+# from google.cloud.language import types
 
 #Import the necessary methods from tweepy library
 from tweepy.streaming import StreamListener
@@ -15,6 +15,12 @@ import json
 
 
 #Variables that contains the user credentials to access Twitter API 
+access_token = "238644596-VeuO6A1iyXpyfgRL7JJHAZjNO28QNjkvQSqExN10"
+access_token_secret = "iNJvuI9EfLQ2dEPFI65fJ8U3esZ5mr3nDc4y9I8p5Emko"
+consumer_key = "TPvvAxzjwHSfFVPloWySF9vDh"
+consumer_secret = "Rur5xXWF1M0kbN8M1C4tGcepaAm3zfvW6wND45NbuHM1lar62q"
+
+
 
 def analyze(content):
     """Run a sentiment analysis request on text within a passed filename."""
@@ -35,7 +41,9 @@ class StdOutListener(StreamListener):
         parsed_data = json.loads(data)
         text = parsed_data['text'].replace("\r","")
         text = text.replace("\n","")
-        score = analyze(text)
+        # score = analyze(text)
+        name = parsed_data['user']['name']
+        print(name)
         return True
 
     def on_error(self, status):
