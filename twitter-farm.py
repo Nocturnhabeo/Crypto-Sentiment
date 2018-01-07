@@ -15,10 +15,6 @@ import json
 
 
 #Variables that contains the user credentials to access Twitter API 
-access_token = "238644596-Z79vxua9Mz7NZV2nUmDXXmzgJpF97jJnfbAO0I9h"
-access_token_secret = "mHgOiP5EmZT688eyEXDqkGXdEh31VKwZW8fLd9Whvrq2i"
-consumer_key = "pAppVEyYbySbiKqDEJv9dxIlj"
-consumer_secret = "gIJW44HRgRu6u1o0JL6Pw3D6Cetg8GTmCYWhajGWAl4XlvbMXJ"
 
 def analyze(content):
     """Run a sentiment analysis request on text within a passed filename."""
@@ -30,16 +26,16 @@ def analyze(content):
     annotations = client.analyze_sentiment(document=document)
 
     # Write results to GCS 
-    print(annotations)
-
+    return annotations.document_sentiment.score
 
 #This is a basic listener that just prints received tweets to stdout.
 class StdOutListener(StreamListener):
 
     def on_data(self, data):
         parsed_data = json.loads(data)
-        # print(parsed_data['text'])
-        analyze(parsed_data['text'])
+        text = parsed_data['text'].replace("\r","")
+        text = text.replace("\n","")
+        score = analyze(text)
         return True
 
     def on_error(self, status):
@@ -55,5 +51,5 @@ if __name__ == '__main__':
     stream = Stream(auth, l)
 
     #This line filter Twitter Streams to capture data by the keywords: 'python', 'javascript', 'ruby'
-    stream.filter(track=['stellar', 'lumens', 'xlm'])
+    stream.filter(track=['xrp', 'lumens', 'xlm'])
 
