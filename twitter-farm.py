@@ -1,9 +1,10 @@
 
 
-# #NLP Sentiment Analysis 
-# from google.cloud import language
-# from google.cloud.language import enums
-# from google.cloud.language import types
+#NLP Sentiment Analysis 
+from google.cloud import language
+from google.cloud.language import enums
+from google.cloud.language import types
+from google.cloud import bigtable
 
 #Import the necessary methods from tweepy library
 from tweepy.streaming import StreamListener
@@ -13,12 +14,26 @@ from tweepy import Stream
 #JSON parsing
 import json
 
+#UUID
+import uuid
+
 
 #Variables that contains the user credentials to access Twitter API 
-access_token = "238644596-VeuO6A1iyXpyfgRL7JJHAZjNO28QNjkvQSqExN10"
-access_token_secret = "iNJvuI9EfLQ2dEPFI65fJ8U3esZ5mr3nDc4y9I8p5Emko"
-consumer_key = "TPvvAxzjwHSfFVPloWySF9vDh"
-consumer_secret = "Rur5xXWF1M0kbN8M1C4tGcepaAm3zfvW6wND45NbuHM1lar62q"
+
+
+# URI scheme for Cloud Storage.
+GOOGLE_STORAGE = 'gs'
+# URI scheme for accessing local files.
+LOCAL_FILE = 'file'
+
+
+instance_id = 'crypto-farm-datastore'
+project_id = 'crypto-sent-analysis'
+column_family_id = 'twitter_farm'
+
+client = bigtable.Client(project=project_id, admin=True)
+instance = client.instance(instance_id)
+
 
 
 
@@ -43,7 +58,43 @@ class StdOutListener(StreamListener):
         text = text.replace("\n","")
         # score = analyze(text)
         name = parsed_data['user']['name']
-        print(name)
+        screen_name = parsed_data['user']['screen_name']
+        retweet_count = parsed_data['retweet_count']
+        fav_count = parsed_data['favorite_count']
+        followers_count = parsed_data['user']['followers_count']
+        timestamp_ms = parsed_data['timestamp_ms']
+        lang = parsed_data['lang']
+
+        row_key = uuid.uuid4()
+        row.set_cell(
+            column_family_id,
+            'name'.encode('utf-8'),
+            name.encode('utf-8'))
+        row.set_cell(
+            column_family_id,
+            'screen_name'.encode('utf-8'),
+            screen_name.encode('utf-8'))
+        row.set_cell(
+            column_family_id,
+            'retweet_count'.encode('utf-8'),
+            retweet_count.encode('utf-8'))
+        row.set_cell(
+            column_family_id,
+            'fav_count'.encode('utf-8'),
+            fav_count.encode('utf-8'))
+        row.set_cell(
+            column_family_id,
+            'followers_count'.encode('utf-8'),
+            followers_count.encode('utf-8'))
+        row.set_cell(
+            column_family_id,
+            'timestamp_ms'.encode('utf-8'),
+            timestamp_ms.encode('utf-8'))
+        row.set_cell(
+            column_family_id,
+            'lang'.encode('utf-8'),
+            lang.encode('utf-8'))
+        row.commit()
         return True
 
     def on_error(self, status):
